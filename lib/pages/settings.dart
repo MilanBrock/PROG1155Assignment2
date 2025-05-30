@@ -1,33 +1,27 @@
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
-  final void Function({Color? newPrimary, Color? newButton, Color? newCard}) onThemeChanged;
+  final void Function(String newTheme) onThemeChanged;
+  final String currentTheme;
 
-  const Settings({super.key, required this.onThemeChanged});
+  const Settings({super.key, required this.onThemeChanged, required this.currentTheme});
 
   @override
   State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
-  String _selectedTheme = 'Purple';
-  String _selectedButtonColor = 'Purple';
-  String _selectedCardColor = 'Purple';
-
-  final Map<String, Color> colorMap = {
-    'Purple': Colors.purple,
-    'Teal': Colors.teal,
-    'Orange': Colors.orange,
-  };
-
+  late String _selectedTheme;
   final List<String> _colors = ['Purple', 'Teal', 'Orange'];
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedTheme = widget.currentTheme;
+  }
+
   void _updateTheme() {
-    widget.onThemeChanged(
-      newPrimary: colorMap[_selectedTheme],
-      newButton: colorMap[_selectedButtonColor],
-      newCard: colorMap[_selectedCardColor]?.withOpacity(0.2),
-    );
+    widget.onThemeChanged(_selectedTheme);
   }
 
   @override
@@ -35,7 +29,6 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),

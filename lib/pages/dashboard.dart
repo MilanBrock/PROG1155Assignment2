@@ -35,7 +35,6 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     // Get the dimensions of the screen
     final MediaQueryData mediaQuery = MediaQuery.of(context);
-    int subtitleCharLimit = (mediaQuery.size.width / 10).floor(); // Character limit for cards
 
 
     return Scaffold(
@@ -63,7 +62,7 @@ class _DashboardState extends State<Dashboard> {
             //
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final isLandscape = constraints.maxWidth > constraints.maxHeight;
+                final isLandscape = mediaQuery.orientation == Orientation.landscape? true: false;
                 final cardWidth = isLandscape
                     ? constraints.maxWidth * 0.5 // Half width in landscape
                     : constraints.maxWidth; // Full width in portrait
@@ -76,19 +75,22 @@ class _DashboardState extends State<Dashboard> {
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     final item = items[index];
+                    final cardHeight = isLandscape ? constraints.maxHeight * 0.7 : null;
+
                     // Create a sizedbox to fit the card
                     return SizedBox(
                       width: cardWidth,
+                      height: cardHeight,
                       child: Card(
                         margin: const EdgeInsets.all(8),
-                        child: ListTile(
-                          title: Text(item['title']!),
+                          child: ListTile(
+                          title: Text(item['title']!, style: Theme.of(context).textTheme.bodyLarge),
                           subtitle: Text(
                             // Show a set amount of text based on the width of the screen.
                             item['description']!.length > subtitleCharLimit
                                 ? '${item['description']!.substring(0, subtitleCharLimit)}...'
                                 : item['description']!,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium),
                           // When tapped, navigate the user to a page where the entire text is visible.
                           onTap: () {
                             Navigator.pushNamed(

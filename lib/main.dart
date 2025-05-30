@@ -16,28 +16,56 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // Store selected colors for the theme
-  Color primaryColor = Colors.purple;
-  Color buttonColor = Colors.deepPurpleAccent;
-  Color cardColor = Colors.deepPurple[50]!;
+  String currentTheme = 'Purple';
 
-  // A method used by the settings to update the colors of the elements
-  void updateTheme({Color? newPrimary, Color? newButton, Color? newCard}) {
+  // A map for the colors of the primary color of the application
+  final Map<String, Color> primaryColorMap = {
+    'Purple': Colors.deepPurple,
+    'Teal': Colors.teal.shade800,
+    'Orange': Colors.deepOrange.shade800,
+  };
+
+  // A map for the color of the top appbar
+  final Map<String, Color> appbarColorMap = {
+    'Purple': Colors.deepPurple,
+    'Teal': Colors.teal.shade800,
+    'Orange': Colors.deepOrange.shade800,
+  };
+
+  // A map for the color of the buttons
+  final Map<String, Color> buttonColorMap = {
+    'Purple': Colors.deepPurple.shade400,
+    'Teal': Colors.teal.shade400,
+    'Orange': Colors.deepOrange.shade400,
+  };
+
+  // A map for the color of the cards
+  final Map<String, Color> cardColorMap = {
+    'Purple': Colors.deepPurple[50]!,
+    'Teal': Colors.teal[50]!,
+    'Orange': Colors.deepOrange[50]!,
+  };
+
+  // Using a setState updates the value of the state and re-renders the widgets
+  void updateTheme(String newTheme) {
     setState(() {
-      if (newPrimary != null) primaryColor = newPrimary;
-      if (newButton != null) buttonColor = newButton;
-      if (newCard != null) cardColor = newCard;
+      currentTheme = newTheme;
     });
   }
 
-  // This widget is the root of your application.
+
+
   @override
   Widget build(BuildContext context) {
+    final primaryColor = primaryColorMap[currentTheme]!;
+    final buttonColor = buttonColorMap[currentTheme]!;
+    final cardColor = cardColorMap[currentTheme]!;
+    final appBarColor = appbarColorMap[currentTheme]!;
 
     return MaterialApp(
       title: 'FlexDash',
       theme: ThemeData(
-        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: 'Oswald',
         primaryColor: primaryColor,
         scaffoldBackgroundColor: Colors.white,
         textTheme: TextTheme(
@@ -45,17 +73,19 @@ class _MyAppState extends State<MyApp> {
           bodyMedium: TextStyle(fontSize: 16, color: Colors.grey[700]),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: appBarColor,
           titleTextStyle: TextStyle(
+            fontFamily: 'Oswald',
             color: Colors.white,
             fontSize: 20,
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            elevation: 4,
             backgroundColor: buttonColor,
             foregroundColor: Colors.white,
-            textStyle: TextStyle(fontSize: 18),
+            textStyle: TextStyle(fontSize: 18, fontFamily: 'Oswald'),
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -64,19 +94,24 @@ class _MyAppState extends State<MyApp> {
         ),
         cardTheme: CardTheme(
           color: cardColor,
-          elevation: 6,
+          elevation: 10,
           margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
 
-      // Initializing the routes of pages, which will be used later with Navigator
+      // Initializing the routes of pages, which will be used later with named route navigation
       initialRoute: '/',
       routes: {
         '/': (context) => const MyHomePage(title: 'FlexDash'),
         '/dashboard': (context) => const Dashboard(),
         '/details': (context) => const DetailsPage(),
-        '/settings': (context) => Settings(onThemeChanged: updateTheme),
+        '/settings': (context) => Settings(
+          onThemeChanged: (String newTheme) {
+            updateTheme(newTheme);
+          },
+          currentTheme: currentTheme,
+        ),
       },
     );
   }
